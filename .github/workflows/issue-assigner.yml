@@ -1,6 +1,8 @@
 name: Issue assignment
 
 on:
+  workflow_dispatch:
+  
   issues: 
     types: [opened]
     
