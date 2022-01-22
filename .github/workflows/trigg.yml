@@ -1,0 +1,35 @@
+name: New Release
+
+on:
+  create:
+    ref_type: tag
+    
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Job start slack notification
+        uses: act10ns/slack@v1
+        with:
+          status: 'START'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if:
+          always()
+          
+      - uses: actions/checkout@v2
+      - name: Install ruby 2.7
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+      - name: Build gem
+        run: gem build *.gemspec
+      
+      - name: Job finish slack notification
+        uses: act10ns/slack@v1
+        with:
+          status: ${{ job.status }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
